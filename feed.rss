@@ -1,1 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content"><channel><title>Cabulas</title><description>I'm an iOS Software Engineer based in London</description><link>https://jjorgemoura.com</link><language>en</language><lastBuildDate>Sun, 28 Jun 2020 20:03:59 +0000</lastBuildDate><pubDate>Sun, 28 Jun 2020 20:03:59 +0000</pubDate><ttl>250</ttl><atom:link href="https://jjorgemoura.com/feed.rss" rel="self" type="application/rss+xml"/></channel></rss>
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content"><channel><title>Cabulas</title><description>I'm an iOS Software Engineer based in London</description><link>https://jjorgemoura.com</link><language>en</language><lastBuildDate>Mon, 26 Oct 2020 21:50:56 +0000</lastBuildDate><pubDate>Mon, 26 Oct 2020 21:50:56 +0000</pubDate><ttl>250</ttl><atom:link href="https://jjorgemoura.com/feed.rss" rel="self" type="application/rss+xml"/><item><guid isPermaLink="true">https://jjorgemoura.com/tips/logging</guid><title>Quick tips</title><description>Using logging #1</description><link>https://jjorgemoura.com/tips/logging</link><pubDate>Mon, 26 Oct 2020 11:45:00 +0000</pubDate><content:encoded><![CDATA[<h1>Quick tips</h1><p>How to start using OS.Logging consistently and frequenty instead of <code>print</code> and <code>NSLog</code>.</p><h2>Intro</h2><p>Apple has introduced two APIs to handle logging.</p><ul><li>OSLog (WWDC 2016)</li></ul><ul><li>Logging (WWDC 2020)</li></ul><p>The <code>Logging</code> API is a more refined API. Also, it handles String interpolation. Thus, we just dont't need to use string format specifiers to format the messages.</p><h2>Setup</h2><h3><code>OSLog</code></h3><p>After this, any call should be just (<code>OSLog</code> version)</p><p>A helper bit should be used for convenience:</p><pre><code class="language-swift">extension OSLog {
+
+    private static let defaultSubsystem = Bundle.main.bundleIdentifier ?? "unknown"
+
+    static let appLifecycle = OSLog(subsystem: defaultSubsystem, category: "appLifecycle")
+    static let temp = OSLog(subsystem: defaultSubsystem, category: "debugMessages")
+}
+
+</code></pre><p>Then, any call is just:</p><pre><code class="language-swift">    os_log("APPDELEGATE -&gt; CONTINUE USER ACTIVITY || userActivity -&gt; %{public}@ || title -&gt; %{public}@", log: .temp, type: .debug, userActivity.activityType, userActivity.title ?? "---")
+</code></pre><h3><code>Logging</code></h3><p>If using the new <code>Logging</code> API, it should be just:</p><pre><code class="language-swift">let logger = Logger(
+        subsystem: "com.xpto.app",
+        category: "FeedDownloader"
+    )
+</code></pre><p>or:</p><pre><code class="language-swift">static var subsystem = Bundle.main.bundleIdentifier!
+
+static let viewCycle = Logger(subsystem: subsystem, category: "viewcycle")
+</code></pre><p>Then, use the api should be just:</p><pre><code class="language-swift">    self.logger.info("Feed downloaded. Contents UUID is \(contents.uuid, privacy: .private(mask: .hash))")
+
+    // or
+
+    Logger.viewCycle.info("View did load!")
+</code></pre><h2>Resources</h2><p><a href="https://www.avanderlee.com/workflow/oslog-unified-logging/">Swift Lee - OSLog and Unified logging as recommended by Apple</a></p><p><a href="https://wwdcbysundell.com/2020/meet-the-new-logger-api/">WWDC by Sundell - Meet the new Logger API</a></p><p><a href="https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFStrings/formatSpecifiers.html">Apple - String format specifiers</a></p>]]></content:encoded></item><item><guid isPermaLink="true">https://jjorgemoura.com/tips/debugging</guid><title>Some quick usefull tools and commands</title><description>Debug Tip #1</description><link>https://jjorgemoura.com/tips/debugging</link><pubDate>Mon, 26 Oct 2020 07:45:00 +0000</pubDate><content:encoded><![CDATA[<h1>Some quick usefull tools and commands</h1><h2>Read all the Registers</h2><p>This is a usefull command to print all the general purpose registers.</p><pre><code class="language-bash">(lldb) register read
+</code></pre><p>However, a better way, via a launch argument, the Layout Feedback Loop Debugger</p><h2>Layout Feedback Loop Debugger</h2><pre><code class="language-bash">- UIViewLayoutFeedbackLoopDebuggingThreshold 100   // 50....1000
+- NSViewLayoutFeedbackLoopDebuggingThreshold 100   // 50....1000
+</code></pre><h2>Use the default Launch Arguments and Environment Variables</h2><p>We could use default Launch Arguments already provided by Xcode in Scheme editor.</p><p>Some exemples of Launch Arguments are:</p><ul><li>Localization Debugging</li></ul><ul><li>Application Language</li></ul><ul><li>Application Region</li></ul><p>Some exemples of Environment Variables are:</p><ul><li>Malloc Scribble</li></ul><h2>Import UIKit</h2><p>Type</p><pre><code class="language-bash">(lldb) expr @import UIKit
+(lldb) po ((UIView *)0x3e34dd23).frame
+</code></pre><h2>Inspect private properties without subclass</h2><p>Key Paths to the rescue</p><h2>Resources</h2><p><a href="https://www.youtube.com/watch?v=LbAlIzxSO6M">Carola Nitz - Advanced Debugging Techniques your senior hasn’t told you about</a></p><p><a href="https://developer.apple.com/videos/play/wwdc2016/236">WWDC - What's New in Auto Layout</a></p><p><a href="https://developer.apple.com/library/content/technotes/tn2239">iOS Debugging magic</a> <a href="https://developer.apple.com/library/content/technotes/tn2124">macOS Debugging magic</a></p>]]></content:encoded></item></channel></rss>
