@@ -1,0 +1,81 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="og:site_name" content="Cabulas"/><link rel="canonical" href="https://jjorgemoura.com/articles/swiftStuff"/><meta name="twitter:url" content="https://jjorgemoura.com/articles/swiftStuff"/><meta name="og:url" content="https://jjorgemoura.com/articles/swiftStuff"/><title>What is and when to use Protocols with associated Types, Generics, Type Erasure and opaque Types | Cabulas</title><meta name="twitter:title" content="What is and when to use Protocols with associated Types, Generics, Type Erasure and opaque Types | Cabulas"/><meta name="og:title" content="What is and when to use Protocols with associated Types, Generics, Type Erasure and opaque Types | Cabulas"/><meta name="description" content="Protocol Oriented Programming"/><meta name="twitter:description" content="Protocol Oriented Programming"/><meta name="og:description" content="Protocol Oriented Programming"/><meta name="twitter:card" content="summary"/><link rel="stylesheet" href="/styles.css" type="text/css"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="shortcut icon" href="/images/favicon.png" type="image/png"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to Cabulas"/></head><body class="item-page"><header><div class="wrapper"><a class="site-name" href="/">Cabulas</a><nav><ul><li><a class="selected" href="/articles">Articles</a></li><li><a href="/manifestos">Manifestos</a></li><li><a href="/tips">Tips</a></li></ul></nav></div></header><div class="wrapper"><article><div class="content"><h1>What is and when to use Protocols with associated Types, Generics, Type Erasure and opaque Types</h1><h2>Protocols</h2><p>Protocols are a simple concept. They define a contract, an interface for an entity. As Apple says, the <code>blueprint of methods, properties, and other requirements that suit a particular task or piece of functionality.</code></p><p>A protocol can be adopted by classes, structs and enums.</p><h3>Terminology</h3><p>Any type that satisfies the requirements of a protocol is said to <strong>conform</strong> to that protocol.</p><p>The protocol defines <strong>requirements</strong> that conforming types must implement.</p><h3>Protocol Extensions</h3><p>Protocols can be extended by <code>extensions</code>.</p><p>Extensions can be used to:</p><ul><li>implement some of the requirements</li><li>implement additional functionality that conforming types can take advantage of</li></ul><h3>Requirements</h3><p>The requirements can be:</p><ul><li>properties (instance or type)<ul><li>specify if is a <code>get</code> or a <code>get &amp; set</code></li><li>methods</li></ul></li></ul><p>Note: Properties need to be declared as <code>var</code>. Type properties are identified by the prefix <code>static</code>. However, the impementation entity can conform with it using <code>static</code> or <code>class</code> prefix.</p><p>Protocols can require specific instance methods and type methods to be implemented by conforming types.</p><p>Note: Default values can’t be specified for method parameters within a protocol’s definition.</p><h3>Mutating Method Requirements</h3><p>It’s sometimes necessary for a method to modify (or mutate) the instance it belongs to. For instance, methods on value types (structs and enums) a <code>mutating</code> keyword is needed before the method’s <code>func</code> keyword. This is to indicate that the method is allowed to modify the instance it belongs to and any properties of that instance.</p><p>Conforming value types also require the <code>mutating</code> keyword. Reference types don't.</p><h3>Initializer Requirements</h3><p>Protocols can also require specific initializers to be implemented by conforming types.</p><p>Note: <em>Class Implementations of Protocol Initializer Requirements</em></p><p>A protocol initializer requirement on a conforming <em>class</em> can be implemented as either a <em>designated</em> initializer or a <em>convenience</em> initializer. In both cases, the initializer implementation needs to be mark with the <code>required</code> modifier:</p><h3>Protocols as Types</h3><p>Protocols don’t actually implement any functionality themselves. Nonetheless, protocols can used as a fully fledged types in code. Using a protocol as a type is sometimes called an <strong>existential type</strong>, which comes from the phrase “<strong><em>there exists a type T such that T conforms to the protocol</em></strong>”.</p><p>Protocols can be used in many places where other types are allowed, including:</p><ul><li>As a parameter type or return type in a function, method, or initializer</li><li>As the type of a constant, variable, or property</li><li>As the type of items in an array, dictionary, or other container</li></ul><h3>Delegation</h3><p>This design pattern is implemented by defining a protocol that encapsulates the <em>delegated</em> responsibilities, such that a conforming type (known as a delegate) is guaranteed to provide the functionality that has been delegated.</p><p>Note: To prevent <em>strong reference cycles</em>, delegates are declared as <code>weak</code> references. Marking the protocol as <strong>class-only</strong> lets the entity that has the delegate to declare that its delegate must use a <code>weak</code> reference. A "class-only" protocol is marked by its inheritance from <code>AnyObject</code>.</p><h3>Adding Protocol Conformance with an Extension</h3><p>An existing type can be extended to adopt and conform to a new protocol, even if there is no access to the source code for the existing type. This is, for example, extending the type <code>String</code> to conform with a new protocol.</p><p>Extensions can add new properties, methods, and subscripts to an existing type, and are therefore able to add any requirements that a protocol may demand.</p><p>Note: Existing instances of a type automatically adopt and conform to a protocol when that conformance is added to the instance’s type in an extension.</p><h3>Conditionally Conforming to a Protocol</h3><p>A generic type may be able to satisfy the requirements of a protocol only under certain conditions, such as when the type’s generic parameter conforms to the protocol. A generic type can conditionally conform to a protocol by listing constraints when extending the type. Write these constraints after the name of the protocol you’re adopting by writing a generic where clause.</p><p>Example:</p><pre><code class="language-swift">extension Array: TextRepresentable where Element: TextRepresentable {
+    var textualDescription: String {
+</code></pre><h3>Synthetized protocols</h3><h4>Equatable</h4><p>Swift provides a synthesized implementation of Equatable for the following kinds of custom types:</p><ul><li>Structures that have only stored properties that conform to the Equatable protocol</li><li>Enumerations that have only associated types that conform to the Equatable protocol</li><li>Enumerations that have no associated types</li></ul><h4>Hashable</h4><p>Swift provides a synthesized implementation of Hashable for the following kinds of custom types:</p><ul><li>Structures that have only stored properties that conform to the Hashable protocol</li><li>Enumerations that have only associated types that conform to the Hashable protocol</li><li>Enumerations that have no associated types</li></ul><h4>Comparable</h4><p>Swift provides a synthesized implementation of Comparable for enumerations that don’t have a raw value. If the enumeration has associated types, they must all conform to the Comparable protocol. To receive a synthesized implementation of <, declare conformance to Comparable in the file that contains the original enumeration declaration, without implementing a < operator yourself. The Comparable protocol’s default implementation of <=, >, and >= provides the remaining comparison operators.
+
+### Protocol Inheritance
+
+A protocol can inherit one or more other protocols and can add further requirements on top of the requirements it inherits. The syntax for protocol inheritance is similar to the syntax for class inheritance, but with the option to list multiple inherited protocols, separated by commas.
+
+### Protocol Composition
+
+It can be useful to require a type to conform to multiple protocols at the same time. You can combine multiple protocols into a single requirement with a protocol composition. Protocol compositions behave as if you defined a temporary local protocol that has the combined requirements of all protocols in the composition. Protocol compositions don’t define any new protocol types.
+
+Protocol compositions have the form `SomeProtocol & AnotherProtocol`. You can list as many protocols as you need, separating them with ampersands (**&**). In addition to its list of protocols, a protocol composition can also contain one class type, which you can use to specify a required superclass.
+
+### Protocol Conformance
+
+The operators `is` and `as` (Type Casting) can be used to check for protocol conformance, and to cast to a specific protocol. Checking for and casting to a protocol follows exactly the same syntax as checking for and casting to a type:
+
+- The `is` operator returns true if an instance conforms to a protocol and returns false if it doesn’t.
+- The `as?` version of the downcast operator returns an optional value of the protocol’s type, and this value is nil if the instance doesn’t conform to that protocol.
+- The `as!` version of the downcast operator forces the downcast to the protocol type and triggers a runtime error if the downcast doesn’t succeed.
+
+### Optional Protocol Requirements
+
+Protocols support optional requirements. These requirements don’t have to be implemented by types that conform to the protocol. Optional requirements are prefixed by the `optional` modifier as part of the protocol’s definition.
+
+Optional requirements are available to allow code that interoperates with Objective-C. Both the protocol and the optional requirement must be marked with the @objc attribute. Note that @objc protocols can be adopted only by classes that inherit from Objective-C classes or other @objc classes.
+
+An important note is that optional requirements **can’t be adopted** by structures or enumerations.
+
+When a method or property in an optional requirement is used, its type automatically becomes an optional.
+
+An optional protocol requirement can be called with optional chaining, to account for the possibility that the requirement was not implemented by a type that conforms to the protocol.
+
+### Protocol Extensions (2)
+
+Protocols can be extended to provide method, initializer, subscript, and computed property implementations to conforming types. This allows defining behavior on protocols themselves, rather than in each type’s individual conformance or in a global function.
+
+Note: Protocol extensions can add implementations to conforming types but can’t make a protocol extend or inherit from another protocol. Protocol inheritance is always specified in the protocol declaration itself.
+
+#### Providing Default Implementations
+
+Protocol extensions can be used to provide a default implementation to any method or computed property requirement of that protocol. If a conforming type provides its own implementation of a required method or property, that implementation will be used instead of the one provided by the extension.
+
+Note: Protocol requirements with default implementations provided by extensions are distinct from optional protocol requirements. Although conforming types don’t have to provide their own implementation of either, requirements with default implementations can be called without optional chaining.
+
+#### Adding Constraints to Protocol Extensions
+
+It is possible to specify constraints that conforming types must satisfy before the methods and properties of the extension are available.
+
+Example: `extension Collection where Element: Equatable {`
+
+## Generics
+
+The concept of generics is kind of simple.
+
+
+## Protocols with Associated Types (PATs)
+
+
+
+
+## Type Erasure
+
+This is a technique to help hiding the type of a Protocol with an associated type.
+
+
+
+
+## Opaque Types
+
+Introduced in Swift 5.1.
+
+
+
+
+
+## Resources
+
+[Protocol-oriented Programming in Swift](https://www.youtube.com/watch?v=xE5EcHuz52I)
+</p></div><span>Tagged with: </span><ul class="tag-list"><li><a href="/tags/article">article</a></li><li><a href="/tags/protocols">protocols</a></li><li><a href="/tags/swift">swift</a></li></ul></article></div><footer><p>Generated using <a href="https://github.com/johnsundell/publish">Publish</a></p><p><a href="/feed.rss">RSS feed</a></p></footer></body></html>
