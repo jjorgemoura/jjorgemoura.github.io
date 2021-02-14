@@ -58,7 +58,8 @@ p.coding a:hover {
 
 p.running a {
     text-decoration: none;
-    color: #ff9800;
+    color: #4caf50;
+    /* color: #ff9800; */
 }
 
 p.running a:hover {
