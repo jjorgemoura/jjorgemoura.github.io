@@ -73,3 +73,31 @@ p.contacts a {
 p.contacts a:hover {
     text-decoration: underline;
 }
+
+
+.sc_container {
+   /* width: 50%; */
+    /* width: 60%; */
+    /* margin: 30px auto; */
+    /* overflow: hidden; */
+}
+
+.galleryItem {
+    /* color: #797478;
+    font: 10px/1.5 Verdana, Helvetica, sans-serif; */
+    float: left;   
+    padding: 8px;
+    /* width: 20%; */
+        
+    /* width: 16%; */
+    /* margin:  2% 2% 50px 2%; */
+}
+
+.galleryItem img {
+    /* max-width: 40%; */
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+
+    width: 50%;
+    height: 50%;
+}
