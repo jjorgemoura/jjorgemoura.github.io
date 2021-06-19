@@ -1,0 +1,22 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="og:site_name" content="Cabulas"/><link rel="canonical" href="https://jjorgemoura.github.io/extraTemp/previouswebsite/logging"/><meta name="twitter:url" content="https://jjorgemoura.github.io/extraTemp/previouswebsite/logging"/><meta name="og:url" content="https://jjorgemoura.github.io/extraTemp/previouswebsite/logging"/><title>Quick tips | Cabulas</title><meta name="twitter:title" content="Quick tips | Cabulas"/><meta name="og:title" content="Quick tips | Cabulas"/><meta name="description" content="Using logging #1"/><meta name="twitter:description" content="Using logging #1"/><meta name="og:description" content="Using logging #1"/><meta name="twitter:card" content="summary"/><link rel="stylesheet" href="/styles.css" type="text/css"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="shortcut icon" href="/images/favicon.png" type="image/png"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to Cabulas"/></head><body><header><div class="wrapper"><a href="/" class="site-name">Cabulas</a><nav><ul><li><a href="/articles">Articles</a></li><li><a href="/tips">Tips</a></li><li><a href="/posts">My posts</a></li></ul></nav></div></header><div class="wrapper"><h1>Quick tips</h1><p>How to start using OS.Logging consistently and frequenty instead of <code>print</code> and <code>NSLog</code>.</p><h2>Intro</h2><p>Apple has introduced two APIs to handle logging.</p><ul><li>OSLog (WWDC 2016)</li></ul><ul><li>Logging (WWDC 2020)</li></ul><p>The <code>Logging</code> API is a more refined API. Also, it handles String interpolation. Thus, we just dont't need to use string format specifiers to format the messages.</p><h2>Setup</h2><h3><code>OSLog</code></h3><p>After this, any call should be just (<code>OSLog</code> version)</p><p>A helper bit should be used for convenience:</p><pre><code class="language-swift">extension OSLog {
+
+    private static let defaultSubsystem = Bundle.main.bundleIdentifier ?? "unknown"
+
+    static let appLifecycle = OSLog(subsystem: defaultSubsystem, category: "appLifecycle")
+    static let temp = OSLog(subsystem: defaultSubsystem, category: "debugMessages")
+}
+
+</code></pre><p>Then, any call is just:</p><pre><code class="language-swift">    os_log("APPDELEGATE -&gt; CONTINUE USER ACTIVITY || userActivity -&gt; %{public}@ || title -&gt; %{public}@", log: .temp, type: .debug, userActivity.activityType, userActivity.title ?? "---")
+</code></pre><h3><code>Logging</code></h3><p>If using the new <code>Logging</code> API, it should be just:</p><pre><code class="language-swift">let logger = Logger(
+        subsystem: "com.xpto.app",
+        category: "FeedDownloader"
+    )
+</code></pre><p>or:</p><pre><code class="language-swift">static var subsystem = Bundle.main.bundleIdentifier!
+
+static let viewCycle = Logger(subsystem: subsystem, category: "viewcycle")
+</code></pre><p>Then, use the api should be just:</p><pre><code class="language-swift">    self.logger.info("Feed downloaded. Contents UUID is \(contents.uuid, privacy: .private(mask: .hash))")
+
+    // or
+
+    Logger.viewCycle.info("View did load!")
+</code></pre><h2>Resources</h2><p><a href="https://www.avanderlee.com/workflow/oslog-unified-logging/">Swift Lee - OSLog and Unified logging as recommended by Apple</a></p><p><a href="https://wwdcbysundell.com/2020/meet-the-new-logger-api/">WWDC by Sundell - Meet the new Logger API</a></p><p><a href="https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFStrings/formatSpecifiers.html">Apple - String format specifiers</a></p></div><footer><p>Generated using <a href="https://github.com/johnsundell/publish">Publish</a></p><p><a href="/feed.rss">RSS feed</a></p></footer></body></html>
